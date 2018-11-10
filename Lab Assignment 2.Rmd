@@ -1,0 +1,129 @@
+---
+title: "Lab Assignment 2"
+author: "Si Chen"
+date: "11/8/2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+redwine <- read.table("redwine.txt", header = TRUE)
+```
+
+#Problem 1
+```{r}
+mean(redwine$RS, na.rm = TRUE)
+mean(redwine$SD, na.rm = TRUE)
+```
+
+The average of RS is 2.537952.
+The average of SD is 46.29836.
+
+#Problem 2
+```{r}
+SD.obs <- na.omit(redwine$SD)
+FS.obs <- redwine$FS[!is.na(redwine$SD)]
+fit1 = lm(SD.obs ~ FS.obs)
+coefficients(fit1)
+```
+
+#Problem 3
+```{r}
+FS.impute <- redwine$FS[is.na(redwine$SD)]
+SD.impute <- coefficients(fit1)[2] * FS.impute + coefficients(fit1)[1]
+redwine$SD[is.na(redwine$SD)] = SD.impute
+mean(redwine$SD)
+```
+
+The average of SD after imputation is 46.30182.
+
+#Problem 4
+```{r}
+avg.imp <- function (a, avg){
+        missing <- is.na(a)
+        imputed <- a
+        imputed[missing] <- avg
+        return (imputed)
+   }
+RS_avg = mean(na.omit(redwine$RS))
+RS.avgimp = avg.imp(redwine$RS,RS_avg)
+mean(RS.avgimp)
+```
+
+The average of RS after imputation is 2.537952.
+
+#Problem 5
+```{r}
+redwine$RS <- RS.avgimp
+fit = lm(QA ~ ., data = redwine)
+coefficients(fit)
+```
+
+#Problem 6
+```{r}
+summary(fit)
+```
+
+PH has the largest p-value, therefore is the least likely to be related to QA.
+
+#Problem 7
+```{r}
+CVInd <- function(n,K) {  
+   m<-floor(n/K)  
+   r<-n-m*K  
+   I<-sample(n,n)  
+   Ind<-list()  
+   length(Ind)<-K
+   for (k in 1:K) {
+      if (k <= r) kpart <- ((m+1)*(k-1)+1):((m+1)*k)  
+         else kpart<-((m+1)*r+m*(k-r-1)+1):((m+1)*r+m*(k-r))
+      Ind[[k]] <- I[kpart]  #indices for kth part of data
+   }
+   Ind
+}
+
+Nrep <- 20 
+K <- 5  
+n = nrow(redwine)
+y<-redwine$QA
+SSE <- c()
+for (j in 1:Nrep) {
+  Ind<-CVInd(n,K)
+  yhat <- y
+  for (k in 1:K) {
+     out <- lm(QA~.,data = redwine[-Ind[[k]],])
+     yhat[Ind[[k]]] <- as.numeric(predict(out,redwine[Ind[[k]],]))
+  } 
+  SSE = c(SSE,sum((y-yhat)^2))
+} 
+SSE
+mean(SSE)
+```
+
+#Probelem 8
+```{r}
+PH.mean = mean(redwine$PH)
+PH.sd = sd(redwine$PH)
+PH.mean
+PH.sd
+PH.lb = PH.mean - 3 * PH.sd
+PH.ub = PH.mean + 3 * PH.sd
+redwine2 <- subset(redwine, redwine$PH < PH.ub & redwine$PH > PH.lb)
+dim(redwine2)
+dim(redwine)
+dim(redwine)[1] - dim(redwine2)[1]
+```
+
+The average of PH is 3.306202.
+The standard deviation of PH is 0.3924948.
+redwine2 has 1580 rows. 19 observations are removed.
+
+#Problem 9
+```{r}
+fit_new = lm(QA ~ ., data = redwine2)
+summary(fit_new)
+```
+
+The new model is better because the R-squared increases.
+VA, CH, SD, SU, AL are attributes having the 5 lowest p-values, so they are most likely to be related to QA.
