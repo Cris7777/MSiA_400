@@ -58,11 +58,11 @@ plot(qrfit1, mfrow =  c(2,2))
 ```
 
 ##c)
-Length: Before 0.55th, basically length has no influence on mpg. From about 0.55th to 0.7th, the length has a drastic positive impact on mpg. After that the length has negative impact on mpg.
+Length: Before 0.55th, with one unit increase th length, there will be on average 0.18 increase in mpg. From about 0.55th to 0.7th, the length has a drastic positive impact on mpg. After that the length has lesser positive impact on mpg. After 0.8th quantile the length has almost no influence on mpg.
 
-Weight: before 0.5th, the mpg increases with weight increases. From 0.6th - 0.8th, the mpg decreases with weight increases. After 0.8th, the mpg increases with weight increases with a high degree.
+Weight: Before 0.6th quantile, onw unit increase in weight will lead to about 0.18 increase in mpg. At 0.6th quantile, 0.1 unit increase in weight will lead to about 0.25 increase in mpg. After 0.8th quantile, weight has no influence on quantile.
 
-comp_ratio: for most part, with the increase in comp_ratio, there will be a decrease in mpg.
+comp_ratio: for most part, with the increase in comp_ratio, there will be a lesser negative impact in mpg But for comp_ratio at 0.6th quantile or after 0.8th quantile, it has a positive effect on mpg.
 
 
 ##d)
