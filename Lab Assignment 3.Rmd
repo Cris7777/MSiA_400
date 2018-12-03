@@ -1,0 +1,97 @@
+---
+title: "Lab Assignment 3"
+author: "Si Chen"
+date: "11/28/2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("~/Desktop/Everything Starts With Data/Lab Assignment 3")
+library(quantreg)
+library(e1071)
+library(boot)
+```
+
+#Problem 1
+
+##a)
+The purpose of MCMC is to sample points from distribution $p(\cdot)$ that is difficult to sample from directly.
+
+##b)
+Metropolis Algorithm starts with an initial value $\theta_0$ and $q(\cdot|\cdot)$ need to be symmetric.
+
+
+Metropolis Hastings Algorithm generalizes from the Metropolis Algorithm and $q(\cdot|\cdot)$ does not to have symmetric.
+
+##c)
+The purpose of Ridge Regression is to minimize SSE subject to $\lambda\sum\beta_j^2\leq s$
+
+
+The purpose of Lasso Regression is to minimize SSE subject to $\lambda\sum|\beta_j|\leq s$
+
+
+##d)
+IIA is the ratio of the probabilities of choosing two alternatives is independent of the presence or attributes of any other alternative. 
+
+#Problem 2
+
+```{r}
+gas = read.csv("gas_mileage.csv")
+```
+
+##a)
+```{r}
+qrfit1 = rq(Mpg ~ ., tau = seq(0.05, 0.95, by=0.05), data = gas)
+sumqr = summary(qrfit1)
+sumqr
+```
+
+##b)
+```{r}
+plot(qrfit1, mfrow =  c(2,2))
+```
+
+##c)
+Length: Before 0.55th, basically length has no influence on mpg. From about 0.55th to 0.7th, the length has a drastic positive impact on mpg. After that the length has negative impact on mpg.
+
+Weight: before 0.5th, the mpg increases with weight increases. From 0.6th - 0.8th, the mpg decreases with weight increases. After 0.8th, the mpg increases with weight increases with a high degree.
+
+comp_ratio: for most part, with the increase in comp_ratio, there will be a decrease in mpg.
+
+
+##d)
+```{r}
+median = rq(Mpg ~ ., tau = .5, data = gas)
+summary(median, se = "boot")
+```
+
+
+#Problem 3
+
+```{r}
+car = read.csv("car.csv")
+```
+
+##a)
+```{r}
+carsvm = svm(factor(y) ~ ., data = car)
+summary(carsvm)
+```
+
+##b)
+```{r}
+plot(carsvm, data = car, income ~ car_age)
+```
+
+##c)
+```{r}
+predict(carsvm, newdata = data.frame(income = 50, car_age = 5))
+```
+
+This family will purchase a new car.
